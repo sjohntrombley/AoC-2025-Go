@@ -39,6 +39,28 @@ func part1(banks [][]uint8) uint16 {
 	return total_joltage
 }
 
+func part2(banks [][]uint8) uint64 {
+	var total_joltage uint64
+	for _, bank := range banks {
+		digits := [12]uint8(bank[len(bank) - 12:])
+		for _, joltage := range slices.Backward(bank[:len(bank) - 12]) {
+			for i := range digits {
+				if joltage < digits[i] {
+					break
+				}
+				digits[i], joltage = joltage, digits[i]
+			}
+		}
+		var joltage uint64
+		for _, d := range digits {
+			joltage *= 10
+			joltage += uint64(d)
+		}
+		total_joltage += joltage
+	}
+	return total_joltage
+}
+
 func main() {
 	input_bytes, err := os.ReadFile("input.txt")
 	if err != nil {
@@ -46,4 +68,5 @@ func main() {
 	}
 	banks := parse_input(string(input_bytes))
 	fmt.Println("Part 1:", part1(banks))
+	fmt.Println("Part 2:", part2(banks))
 }
