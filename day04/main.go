@@ -69,6 +69,56 @@ func part1(roll_grid [][]bool) uint16 {
 	return accessable_count
 }
 
+type location struct {
+	r int
+	c int
+}
+
+func get_accessible(roll_grid [][]bool) map[location]struct{} {
+	accessible_locations := make(map[location]struct{})
+	for r := 1; r < len(roll_grid) - 1; r++ {
+		for c := 1; c < len(roll_grid[r]) - 1; c++ {
+			if !roll_grid[r][c] {
+				continue
+			}
+
+			var adjacent_count uint16
+			for cr := r - 1; cr < r + 2; cr++ {
+				for cc := c - 1; cc < c + 2; cc++ {
+					if cr == r && cc == c {
+						continue
+					}
+					if roll_grid[cr][cc] {
+						adjacent_count++
+					}
+				}
+			}
+
+			if adjacent_count < 4 {
+				accessible_locations[location{r, c}] = struct{}{}
+			}
+		}
+	}
+	
+	return accessible_locations
+}
+
+func part2(roll_grid [][]bool) uint16 {
+	var removed_count uint16
+	for {
+		accessible_locations := get_accessible(roll_grid)
+		if len(accessible_locations) == 0 {
+			break
+		}
+		for l := range accessible_locations {
+			roll_grid[l.r][l.c] = false
+		}
+		removed_count += uint16(len(accessible_locations))
+	}
+
+	return removed_count
+}
+
 func main() {
 	input_bytes, err := os.ReadFile("input.txt")
 	if err != nil {
@@ -76,4 +126,5 @@ func main() {
 	}
 	roll_grid := parse_input(string(input_bytes))
 	fmt.Println("Part 1:", part1(roll_grid))
+	fmt.Println("Part 2:", part2(roll_grid))
 }
