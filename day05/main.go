@@ -116,6 +116,14 @@ func part1(fresh_ranges FreshRangeSet, ingredients []int64) uint16 {
 	return fresh_count
 }
 
+func part2(fresh_ranges FreshRangeSet) int64 {
+	var fresh_count int64
+	for _, fr := range fresh_ranges.ranges {
+		fresh_count += fr.end - fr.start + 1
+	}
+	return fresh_count
+}
+
 func main() {
 	input_bytes, err := os.ReadFile("input.txt")
 	if err != nil {
@@ -123,4 +131,5 @@ func main() {
 	}
 	fresh_ranges, ingredients := parse_input(string(input_bytes))
 	fmt.Println("Part 1:", part1(fresh_ranges, ingredients))
+	fmt.Println("Part 2:", part2(fresh_ranges))
 }
