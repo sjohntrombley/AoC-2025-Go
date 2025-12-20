@@ -53,6 +53,35 @@ func Solve1(splitters [][]bool, start_column int) int {
 	return splitter_count
 }
 
+func Solve2(splitters [][]bool, start_column int) int {
+	row_length := len(splitters[0])
+	cur_beams := make([]int, row_length)
+	cur_beams[start_column] = 1
+	next_beams := make([]int, row_length)
+	for _, splitters_row := range splitters {
+		for column_index, timeline_count := range cur_beams {
+			if timeline_count > 0 {
+				if splitters_row[column_index] {
+					next_beams[column_index - 1] += timeline_count
+					next_beams[column_index + 1] += timeline_count
+				} else {
+					next_beams[column_index] += timeline_count
+				}
+			}
+		}
+
+		clear(cur_beams)
+		cur_beams, next_beams = next_beams, cur_beams
+	}
+
+	var timeline_count int
+	for _, tc := range cur_beams {
+		timeline_count += tc
+	}
+
+	return timeline_count
+}
+
 func main() {
 	input_bytes, err := os.ReadFile("input.txt")
 	if err != nil {
@@ -62,4 +91,5 @@ func main() {
 
 	splitters, start_column := ParseInput(string(input_bytes))
 	fmt.Println("Part 1:", Solve1(splitters, start_column))
+	fmt.Println("Part 2:", Solve2(splitters, start_column))
 }
